@@ -116,16 +116,24 @@ module ear_notches() {
 
 // two vertical through-holes in the scoop regions (+/-Y); 2.5 mm gap
 // between the part edge and the near edge of each hole
+// one bolt recess as a SINGLE revolved solid (hole + cone + cylinder) — the
+// sections share no coincident faces, so the cut renders cleanly
+module bolt_recess() {
+    rotate_extrude()
+        polygon([
+            [0,             -1],
+            [side_hole_d/2, -1],
+            [side_hole_d/2, hole_remain],   // straight hole at the bottom
+            [head_d/2,      scoop_min_h],   // cone up to the scoop floor
+            [head_d/2,      post_h + 1],    // cylinder up through the top
+            [0,             post_h + 1]
+        ]);
+}
+
 module side_holes() {
     r = post_d/2 - side_hole_ed - side_hole_d/2;   // hole centre radius
-    for (sy = [1, -1]) {
-        translate([0, sy*r, -1])                                       // through-hole
-            cylinder(d = side_hole_d, h = post_h + 2);
-        translate([0, sy*r, scoop_min_h])                              // top cylinder (down to scoop floor)
-            cylinder(d = head_d, h = post_h - scoop_min_h + eps);
-        translate([0, sy*r, hole_remain])                              // cone: scoop floor -> near bottom
-            cylinder(d1 = side_hole_d, d2 = head_d, h = scoop_min_h - hole_remain);
-    }
+    for (sy = [1, -1])
+        translate([0, sy*r, 0]) bolt_recess();
 }
 
 // large shallow spherical scoops on the sides without ears (+/-Y),
