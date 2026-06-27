@@ -23,6 +23,13 @@
 //  Render one part at a time for printing, or preview the fit.
 // =====================================================================
 
+// ---- README manifest (consumed by build_docs.py — drives the docs) ----
+// @doc-title  QTM01 — Garmin / Wahoo Quarter-Turn Mount
+// @doc-part   female     The receptacle: a capture lip with two entry slots over a tab chamber.
+// @doc-part   male       The cleat: a central post carrying two locking ears.
+// @doc-view   assembled  The seated, locked fit (static preview).
+// @doc-gif    animate    Quarter-turn assembly — drop in, then twist 90 deg to lock.
+
 /* [What to render] */
 // male  = the cleat, female = the receptacle, both = print layout,
 // assembled = static fit preview, animate = quarter-turn animation ($t)
