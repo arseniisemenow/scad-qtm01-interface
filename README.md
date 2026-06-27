@@ -67,7 +67,7 @@ Quarter-turn assembly — drop in, then twist 90 deg to lock.
 
 | Parameter | Value | Description |
 |---|---|---|
-| `part` | `"both"` | one of: male, female, both, assembled, animate |
+| `part` | `"both"` | one of: male, female, both, assembled, animate, section |
 
 **Verified quarter-turn geometry (mm) — do not change**
 
@@ -92,6 +92,7 @@ Quarter-turn assembly — drop in, then twist 90 deg to lock.
 | `post_h` | `3.75` | MALE HEIGHT: the whole cleat (post + ears at its tip) |
 | `base_h` | `0` | optional grip flange under the cleat (0 = bare cleat) |
 | `total_h` | `5.5` | FEMALE overall height (the floor is derived to match) |
+| `fillet_r` | `0.2` | chamfer size on the lock features (pockets + ramps); 0 = sharp |
 | `$fn` | `120` |  |
 | `eps` | `0.01` |  |
 
@@ -131,8 +132,10 @@ Quarter-turn assembly — drop in, then twist 90 deg to lock.
 
 | Parameter | Value | Description |
 |---|---|---|
-| `side_hole_d` | `3.45` | hole diameter |
+| `side_hole_d` | `3.45` | through-hole diameter |
 | `side_hole_ed` | `2.5` | gap from the outer edge to the NEAR edge of the hole |
+| `head_d` | `5.25` | bolt-head recess diameter (top cylinder + cone wide end) |
+| `hole_remain` | `0.3` | plain through-hole left at the very bottom |
 
 **Trapezoid lock — pockets on the male leading (mating) face**
 

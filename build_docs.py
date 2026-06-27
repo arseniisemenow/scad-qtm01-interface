@@ -111,7 +111,8 @@ def render_gif(scad, part, out, camera):
     need("ffmpeg")
     with tempfile.TemporaryDirectory() as tmp:
         frame = os.path.join(tmp, "frame.png")
-        run(["openscad", "-o", frame, "-D", f'part="{part}"',
+        # fillet_r=0 keeps the many animation frames fast (fillets are invisible here)
+        run(["openscad", "-o", frame, "-D", f'part="{part}"', "-D", "fillet_r=0",
              f"--animate={GIF_FRAMES}", f"--imgsize={GIF_IMG}",
              f"--camera={camera}", f"--colorscheme={COLORS}", scad])
         pat = os.path.join(tmp, "frame%05d.png")

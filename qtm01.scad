@@ -33,7 +33,7 @@
 /* [What to render] */
 // male  = the cleat, female = the receptacle, both = print layout,
 // assembled = static fit preview, animate = quarter-turn animation ($t)
-part = "both";   // [male, female, both, assembled, animate]
+part = "both";   // [male, female, both, assembled, animate, section]
 
 /* [Verified quarter-turn geometry (mm) — do not change] */
 post_d    = 24.9;   // central post / body diameter
@@ -52,6 +52,7 @@ ear_oval = 0.8;     // ear shape: 1 = circle, <1 = elongated oval along the span
 post_h   = 3.75;    // MALE HEIGHT: the whole cleat (post + ears at its tip)
 base_h   = 0;       // optional grip flange under the cleat (0 = bare cleat)
 total_h  = 5.5;     // FEMALE overall height (the floor is derived to match)
+fillet_r = 0.2;     // chamfer size on the lock features (pockets + ramps); 0 = sharp
 $fn      = 120;
 
 eps = 0.01;
@@ -78,8 +79,10 @@ scoop_d     = 2 * post_d;   // sphere diameter ~ 2x the male main diameter (≈4
 scoop_min_h = 2.45;         // remaining male height at the deepest point (depth 1.3)
 
 /* [Through-holes on the male — in the scoop regions (±Y)] */
-side_hole_d  = 3.45;   // hole diameter
+side_hole_d  = 3.45;   // through-hole diameter
 side_hole_ed = 2.5;    // gap from the outer edge to the NEAR edge of the hole
+head_d       = 5.25;   // bolt-head recess diameter (top cylinder + cone wide end)
+hole_remain  = 0.3;    // plain through-hole left at the very bottom
 
 /* [Trapezoid lock — pockets on the male leading (mating) face] */
 trap_offset = 2.05;  // gap from the outer edge to the pocket (outer end R=12.2)
@@ -115,9 +118,14 @@ module ear_notches() {
 // between the part edge and the near edge of each hole
 module side_holes() {
     r = post_d/2 - side_hole_ed - side_hole_d/2;   // hole centre radius
-    for (sy = [1, -1])
-        translate([0, sy*r, -1])
+    for (sy = [1, -1]) {
+        translate([0, sy*r, -1])                                       // through-hole
             cylinder(d = side_hole_d, h = post_h + 2);
+        translate([0, sy*r, scoop_min_h])                              // top cylinder (down to scoop floor)
+            cylinder(d = head_d, h = post_h - scoop_min_h + eps);
+        translate([0, sy*r, hole_remain])                              // cone: scoop floor -> near bottom
+            cylinder(d1 = side_hole_d, d2 = head_d, h = scoop_min_h - hole_remain);
+    }
 }
 
 // large shallow spherical scoops on the sides without ears (+/-Y),
@@ -130,6 +138,18 @@ module clearance_spheres() {
         translate([0, sy*post_d/2, Zc]) sphere(d = scoop_d);
 }
 
+// single-segment (chamfer) transition on a convex feature's edges — fast.
+// Uses an octahedron as the minkowski element -> flat bevels, not round fillets.
+module fil() {
+    if (fillet_r > 0)
+        minkowski() {
+            children();
+            hull() for (p = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]])
+                translate(p * fillet_r) cube(0.002, center = true);
+        }
+    else children();
+}
+
 // two trapezoidal pockets on the leading (mating) face, one at each ear (+/-X)
 module trap_pockets() {
     r_out = tab_span/2 - trap_offset;   // outer end, set in from the edge
@@ -137,7 +157,7 @@ module trap_pockets() {
     for (a = [0, 180])
         rotate([0, 0, a])
         translate([0, 0, base_h + post_h - trap_depth])
-            linear_extrude(trap_depth + eps)
+            fil() linear_extrude(trap_depth + eps)
                 polygon([[r_in, -trap_w_in/2],  [r_out, -trap_w_out/2],
                          [r_out, trap_w_out/2],  [r_in,  trap_w_in/2]]);
 }
@@ -160,7 +180,7 @@ module trap_ramps() {
     for (a = [90, 270])
         rotate([0, 0, a])
         translate([0, 0, floor_th])
-        hull() {
+        fil() hull() {
             translate([r_out, -ramp_w_out/2, 0]) cube([0.01, ramp_w_out, ramp_h]);
             translate([r_in,  -ramp_w_in/2,  0]) cube([0.01, ramp_w_in,  ramp_h_in]);
         }
@@ -268,8 +288,17 @@ module assembly_anim() {
         qtm_male();
 }
 
+// male sliced at X=0 (through both bolt holes) — reveals the internal cone in 3D
+module male_section() {
+    difference() {
+        color(male_color) qtm_male();
+        translate([0, -100, -50]) cube([100, 200, 200]);   // remove X>0
+    }
+}
+
 if      (part == "male")      color(male_color) qtm_male();
 else if (part == "female")    color(female_color) qtm_female();
 else if (part == "assembled") assembled();
 else if (part == "animate")   assembly_anim();
+else if (part == "section")   male_section();
 else                          print_both();
