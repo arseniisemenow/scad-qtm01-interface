@@ -267,13 +267,17 @@ module print_both() {
     translate([ (body_d/2 + 3), 0, 0]) color(male_color) qtm_male();
 }
 
+// male placed in the assembly at a given twist angle (0 = insert, 90 = locked)
+module male_placed(twist) {
+    translate([0, 0, base_h + post_h + floor_th])
+        rotate([180, 0, twist])
+        qtm_male();
+}
+
 module assembled() {
     // male flipped tabs-down, ears seated on the floor, turned 90 deg (locked)
     color(female_color) qtm_female();
-    color(male_color)
-        translate([0, 0, base_h + post_h + floor_th])
-        rotate([180, 0, 90])
-        qtm_male();
+    color(male_color)   male_placed(90);
 }
 
 // ---------------------------------------------------------------------
