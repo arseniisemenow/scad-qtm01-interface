@@ -93,3 +93,10 @@ Quarter-turn assembly — drop in, then twist 90 deg to lock.
 | `floor_th` | `2` | female solid floor under the chamber |
 | `$fn` | `120` |  |
 | `eps` | `0.01` |  |
+
+**Preview colors**
+
+| Parameter | Value | Description |
+|---|---|---|
+| `male_color` | `"DarkBlue"` | male part colour in previews / animation |
+| `female_color` | `"DarkRed"` | female part colour in previews / animation |

@@ -55,6 +55,10 @@ $fn      = 120;
 
 eps = 0.01;
 
+/* [Preview colors] */
+male_color   = "DarkBlue";   // male part colour in previews / animation
+female_color = "DarkRed";    // female part colour in previews / animation
+
 // ---------------------------------------------------------------------
 //  MALE  —  cleat: grip flange + post + two ears at the tip
 // ---------------------------------------------------------------------
@@ -108,16 +112,16 @@ module qtm_female() {
 //  Layout
 // ---------------------------------------------------------------------
 module print_both() {
-    translate([-(body_d/2 + 3), 0, 0]) qtm_female();
-    translate([ (body_d/2 + 3), 0, 0]) qtm_male();
+    translate([-(body_d/2 + 3), 0, 0]) color(female_color) qtm_female();
+    translate([ (body_d/2 + 3), 0, 0]) color(male_color) qtm_male();
 }
 
 module assembled() {
     pocket_h = tab_th + 1.0;
     H = floor_th + pocket_h + lip;
     // male flipped tabs-down, ears seated in the chamber, turned 90 deg (locked)
-    color("SteelBlue") qtm_female();
-    color("Goldenrod")
+    color(female_color) qtm_female();
+    color(male_color)
         translate([0, 0, base_h + post_h + floor_th + 0.5])
         rotate([180, 0, 90])
         qtm_male();
@@ -138,15 +142,15 @@ module assembly_anim() {
     descend = ($t < 0.5) ? seat_z + lift * (1 - $t/0.5) : seat_z;
     twist   = ($t < 0.5) ? 0 : 90 * ($t - 0.5)/0.5;
 
-    color("SteelBlue") qtm_female();
-    color("Goldenrod")
+    color(female_color) qtm_female();
+    color(male_color)
         translate([0, 0, descend])
         rotate([180, 0, twist])
         qtm_male();
 }
 
-if      (part == "male")      qtm_male();
-else if (part == "female")    qtm_female();
+if      (part == "male")      color(male_color) qtm_male();
+else if (part == "female")    color(female_color) qtm_female();
 else if (part == "assembled") assembled();
 else if (part == "animate")   assembly_anim();
 else                          print_both();
