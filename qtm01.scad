@@ -82,14 +82,15 @@ side_hole_d  = 3.45;   // hole diameter
 side_hole_ed = 2.5;    // gap from the outer edge to the NEAR edge of the hole
 
 /* [Trapezoid lock — pockets on the male leading (mating) face] */
-trap_offset = 2.0;   // gap from the outer edge to the pocket
-trap_len    = 6.4;   // pocket length, outer -> centre
+trap_offset = 2.05;  // gap from the outer edge to the pocket (outer end R=12.2)
+trap_len    = 5.95;  // pocket length: outer R=12.2 -> inner R=6.25
 trap_w_out  = 3.0;   // pocket width at the outer (wide) end
 trap_w_in   = 2.0;   // pocket width at the centre (narrow) end
 trap_depth  = 1.5;   // pocket depth
 
 /* [Trapezoid lock — ramps on the female floor] */
-ramp_len   = 4.6;   // ramp length (radial)
+ramp_len   = 4.9;   // ramp length (radial)
+ramp_r_in  = 6.7;   // inner-end radius (the two inner ends are 13.4 mm apart)
 ramp_w_out = 2.7;   // ramp width at the outer (wide) end
 ramp_w_in  = 1.0;   // ramp width at the inner (narrow) end
 ramp_h     = 1.0;   // ramp height at the outer edge
@@ -154,8 +155,8 @@ module fixator_bumps() {
 // two trapezoidal ramps on the chamber floor (+/-Y) that seat into the
 // male pockets at lock — taller at the outer edge, lower toward the centre
 module trap_ramps() {
-    r_out = tab_span/2 - trap_offset;       // align outer end with the pocket
-    r_in  = r_out - ramp_len;
+    r_in  = ramp_r_in;                      // inner end (13.4 mm between the two)
+    r_out = r_in + ramp_len;
     for (a = [90, 270])
         rotate([0, 0, a])
         translate([0, 0, floor_th])
